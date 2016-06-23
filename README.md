@@ -1,3 +1,3 @@
 # ReleaseNotePython
 
-A program for updating/creating release notes on Octopus deploy
+An app for updating/creating release notes on Octopus deploy
