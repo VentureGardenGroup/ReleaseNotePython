@@ -1,0 +1,129 @@
+{% extends "base.html" %} {% block content %}
+<div class="row">
+    <div class="col s12">
+        {% with msgs = get_flashed_messages(category_filter=["right"]) %}
+        {% if msgs %}
+        <div class="card-panel green lighten-2 accent-3">
+            {%- for msg in msgs %}
+            <span><i class="material-icons">info_outline</i><span>{{msg}}</span></span>
+            {% endfor -%}
+        </div>
+        {% endif %}
+        {% endwith %}
+        {% with errors = get_flashed_messages(category_filter=["wrong"]) %}
+        {% if errors %}
+        <div class="card-panel red accent-3">
+            {%- for msg in errors %}
+            <span><i class="material-icons">error</i><span>{{msg}}</span></span>
+            {% endfor -%}
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+<div class="row">
+    <div class="col s5">
+        <ul class="collection with-header">
+            <li class="collection-header"><h5>{{release['id']}} - <a
+                    href="{{url_for('get_project',project_id = release['project_id'])}}">#{{release['project_id']}}</a>
+            </h5></li>
+            <li class="collection-item">Version: {{release['version']}}</li>
+            <li class="collection-item">Assembled: {{release['assembled']}}</li>
+        </ul>
+    </div>
+    <div class="col s7">
+        <div class="card-panel">
+            <h4>Release Note</h4>
+            <div>
+                <span class="black-text">
+              {{release['release_notes'] |safe}}
+          </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row" data-bind="visible:checkedIssues().length > 0">
+    <div class="col s12">
+        <ul class="collection" data-bind="foreach: checkedIssues">
+            <li class="collection-item">
+                <span data-bind="text:key"></span> - <span data-bind="text:status"></span> - <span
+                    data-bind="text:issueType"></span>
+                - <span data-bind="text:summary"></span>
+            </li>
+        </ul>
+    </div>
+    <form name="releasenoteform" class="col s12" method="post"
+          action="{{url_for('update_release_note',release_id=release['id'])}}">
+        <input type="hidden" name="id" id="id" value="{{release['id']}}"/>
+        <input type="hidden" name="version" value="{{release['version']}}"/>
+        <input type="hidden" name="channelId" value="{{release['channel_id']}}"/>
+        <input type="hidden" name="releaseNote" id="releasenote" value=""/>
+        <input type="hidden" name="projectId" id="projectId" value="{{release['project_id']}}"/>
+        <input type="hidden"
+               name ="selectedPackages"
+               value="{% for package in release['selected_packages']  %}{{package['StepName']}}||{%endfor%}"
+        />
+        <div class="input-field col s12">
+            <button type="submit" class="waves-effect waves-light btn blue-grey">Update Release Note</button>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="input-field col s12">
+        <input id="search" type="text" class="validate" placeholder="Start Typing"
+               data-bind="value:search ,valueUpdate: 'keyup'">
+        <label for="search">Ticket ID</label>
+    </div>
+</div>
+<div class="row">
+    <table>
+        <thead>
+        <tr>
+            <th style="width:5%"></th>
+            <th style="width:15%">Ticket ID</th>
+            <th style="width:15%">Status</th>
+            <th style="width:15%">Issue Type</th>
+            <th style="width:25%">Summary</th>
+            <th style="width:25%">Description</th>
+
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: currentPage">
+        <tr>
+            <td>
+                <input type="checkbox"
+                       data-bind="attr:{id:key}, checked:$root.checkedIssuesKeys,  value: key, click:$root.selectTicket"/>
+                <label data-bind="attr:{for:key}"></label>
+            </td>
+            <td><p data-bind="text: key"></p></td>
+            <td><p data-bind="text: status"></p></td>
+            <td><p data-bind="text: issueType"></p></td>
+            <td><p data-bind="text: summary"></p></td>
+            <td><p data-bind="text: description"></p></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5">
+
+                <ul class="pagination" data-bind="visible: currentPage().length > 0 ">
+                    <li class="waves-effect"><a href="#!" title="Previous" data-bind="click: previousPage"><i
+                            class="material-icons">chevron_left</i></a></li>
+                    <li data-bind="text: currentPageIndex() + 1"></li>
+                     <li >/</li>
+                    <li data-bind="text: Math.ceil(currentLength() / pageSize())"></li>
+                    <li class="waves-effect"><a href="#!" data-bind="click: nextPage"><i class="material-icons">chevron_right</i></a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/get-issues.js') }}"></script>
+{% endblock %}
+
+

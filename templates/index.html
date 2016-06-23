@@ -1,0 +1,19 @@
+{% extends "base.html" %} {% block content %}
+<div class="row"></div>
+<div class="row">
+    {% for project in projects %}
+    <div class="col s6">
+        <ul class="collection with-header">
+            <li class="collection-header"><h5>{{project['name']}}</h5></li>
+            <li class="collection-item">Description: {{project['description']}}</li>
+            <li class="collection-item"><p class="badge"><a href="/release/{{project['release_id']}}">{{project['release_id']}}</a>
+                | {{project['release_version']}} | {{project['created']}}</p></li>
+            <li class="collection-item">
+                <div>&nbsp;<a href="/project/{{project['id']}}" class="secondary-content"><i
+                        class="material-icons">send</i></a></div>
+            </li>
+        </ul>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

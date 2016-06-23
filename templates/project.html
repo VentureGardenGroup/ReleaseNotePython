@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block content %}
+<div class="row"></div>
+<div class="row">
+    <div class="col s4">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <span class="card-title">{{project['name']}}</span>
+                <p>{{project['id']}}</p>
+                <p>{{project['description']}}</p>
+                <p class="badge">
+                    <a data-bind="text:latest().id(), attr: {'href':'/release/'+latest().id()}"></a> |
+                    <span data-bind="text:latest().version()"></span>
+                </p>
+                <input id="projectId" value="{{project['id']}}" type="hidden"/>
+            </div>
+
+        </div>
+    </div>
+    <div class="col s8">
+        <table>
+            <thead>
+            <tr>
+                <th data-field="id">ID</th>
+                <th data-field="version">Version</th>
+                <th data-field="assembled">Assembled</th>
+            </tr>
+            </thead>
+
+            <tbody data-bind="foreach: currentPage">
+
+            <tr>
+                <td><a data-bind="attr: {'href':'/release/'+id()}, text:id"></a></td>
+                <td data-bind="text:version"></td>
+                <td data-bind="text: assembled"></td>
+            </tr>
+
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="5">
+                    <ul class="pagination" data-bind="visible: currentPage().length > 0 ">
+                        <li class="waves-effect"><a href="#!" title="Previous" data-bind="click: previousPage"><i
+                                class="material-icons">chevron_left</i></a></li>
+                        <li data-bind="text: currentPageIndex() + 1"></li>
+                        <li>/</li>
+                        <li data-bind="text: Math.ceil(currentLength() / pageSize())"></li>
+                        <li class="waves-effect"><a href="#!" data-bind="click: nextPage"><i class="material-icons">chevron_right</i></a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/get-releases.js') }}"></script>
+{% endblock %}
